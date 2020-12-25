@@ -15,6 +15,7 @@ public class GameManager : MonoBehaviour
     public static bool GameIsPaused;
     public int numberOfButton;
     public Image[] bulets;
+   [SerializeField] private bool cursor;
 
     public Sprite fullBullet;
     public Sprite emtyBulet;
@@ -24,6 +25,8 @@ public class GameManager : MonoBehaviour
         playerProperties.enemy = enemy;
         playerProperties.menu = false;
         playerProperties.menuPause = true;
+        cursor = true;
+   
     }
 
     
@@ -32,13 +35,15 @@ public class GameManager : MonoBehaviour
       
         if (playerProperties.enemy <= 0)
         {
-            victoryMemu.SetActive(true);
+            cursor = false;
+            victoryMemu.SetActive(true);          
             playerProperties.menuPause = false;
             playerProperties.menu = true;
             losingBool = false;
         }
         if(playerProperties.bullet == 0)
         {
+            cursor = false;
             Invoke("LosingMenu", 2f);
             playerProperties.menuPause = false;
             playerProperties.menu = true;
@@ -47,12 +52,8 @@ public class GameManager : MonoBehaviour
         {
             if (Input.GetKeyDown(KeyCode.Escape))
             {
-                if (GameIsPaused)
-                {
-                    Continue();
-                }
-                else
-                {
+                if (!GameIsPaused)
+                {                  
                     Pause();
                 }
             }
@@ -80,12 +81,14 @@ public class GameManager : MonoBehaviour
                 bulets[i].enabled = false;
             }
         }
+        CursorFalse();
 
     }
     public void Continue()
     {
         if (playerProperties.menuPause)
         {
+            cursor = true;
             pauseMenu.SetActive(false);
             Time.timeScale = 1f;
             GameIsPaused = false;
@@ -94,7 +97,7 @@ public class GameManager : MonoBehaviour
     }
     IEnumerator ContinueCoroutine()
     {
-        yield return new WaitForSeconds(0.2f);
+        yield return new WaitForSeconds(2f);
         playerProperties.menu = false;
     }
     public void Pause()
@@ -102,6 +105,7 @@ public class GameManager : MonoBehaviour
 
         if (playerProperties.menuPause)
         {
+            cursor = false;
             playerProperties.menu = true;
             pauseMenu.SetActive(true);
             Time.timeScale = 0f;
@@ -112,6 +116,7 @@ public class GameManager : MonoBehaviour
     public void QuitGame()
     {
         Application.Quit();
+        Time.timeScale = 1f;
     }
 
     public void Restart()
@@ -124,6 +129,23 @@ public class GameManager : MonoBehaviour
         if (losingBool)
         {
             losingMenu.SetActive(true);
+        }
+    }
+    public void MainMenu()
+    {
+        SceneManager.LoadScene(0);
+        Time.timeScale = 1f;
+
+    }
+    public void CursorFalse()
+    {
+        if (cursor)
+        {
+            Cursor.visible = false;
+        }
+        else
+        {
+            Cursor.visible = true;
         }
     }
     
